@@ -1,0 +1,4 @@
+package Entity.Record;
+
+public record Client(int id, String nom, String email, String phone) {
+}
