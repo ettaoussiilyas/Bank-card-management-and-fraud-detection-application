@@ -1,4 +1,6 @@
 package Entity.Record;
 
-public record AlerteFraude() {
+import Entity.Enum.NiveauAlerte;
+
+public record AlerteFraude(int id, String description, NiveauAlerte niveau, String idCarte) {
 }
