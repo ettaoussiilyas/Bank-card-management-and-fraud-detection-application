@@ -1,4 +1,12 @@
 /*
+CREATE TABLE Client (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nom VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telephone VARCHAR(20) NOT NULL
+);
+*/
+/*
 CREATE TABLE Carte (
     id VARCHAR(80) PRIMARY KEY,
     numero VARCHAR(16) UNIQUE NOT NULL,
@@ -9,14 +17,6 @@ CREATE TABLE Carte (
     FOREIGN KEY (idClient) REFERENCES Client(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
-);
-*/
-/*
-CREATE TABLE Client (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nom VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    telephone VARCHAR(20) NOT NULL
 );
 */
 /*CREATE TABLE OperationCarte (
