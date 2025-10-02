@@ -1,14 +1,17 @@
 import Util.DataBaseConnection;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
-        DataBaseConnection.getConnection();
-        // write query for test if connection is successful
-
-//        String query = "SELECT * FROM Carte";
-
-
+        Connection conn = DataBaseConnection.getConnection();
+        if (conn != null){
+            System.out.println("Connexion réussie à MySQL ! Main");
+        }else{
+            System.out.println("Connexion échouée à MySQL ! Main");
+        }
 
     }
 }

@@ -10,14 +10,16 @@ public sealed class Carte permits CarteCredit, CarteDebit, CartePrepayee {
     StatuCarte statut;
     double solde;
     int idClient;
+    String typeCarte;
 
-    public Carte(String id, String numero, String dateExpiration, StatuCarte statut, double solde, int idClient) {
+    public Carte(String id, String numero, String dateExpiration, StatuCarte statut, String typeCarte, int idClient, float solde) {
         this.id = id;
         this.numero = numero;
         this.dateExpiration = dateExpiration;
         this.statut = statut;
-        this.solde = solde;
+        this.typeCarte = typeCarte;
         this.idClient = idClient;
+        this.solde = solde;
     }
 
     public String getId() {
@@ -67,4 +69,14 @@ public sealed class Carte permits CarteCredit, CarteDebit, CartePrepayee {
     public void setIdClient(int idClient) {
         this.idClient = idClient;
     }
+
+    public String getTypeCarte() {
+        return typeCarte;
+    }
+
+    public void setTypeCarte(String typeCarte) {
+        this.typeCarte = typeCarte;
+    }
+
+
 }
