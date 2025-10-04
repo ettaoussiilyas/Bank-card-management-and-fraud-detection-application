@@ -21,7 +21,7 @@ public class CarteDAO implements Dao<Carte> {
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, String.valueOf(id));
+            ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if(rs.next()) {
                     return Optional.of(createCarteFromResultSet(rs));
@@ -49,16 +49,15 @@ public class CarteDAO implements Dao<Carte> {
 
     @Override
     public boolean save(Carte carte) throws SQLException {
-        String sql = "INSERT INTO Carte (id, numero, dateExpiration, statut, typeCarte, idClient) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Carte (numero, dateExpiration, statut, typeCarte, idClient) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, carte.getId());
-            ps.setString(2, carte.getNumero());
-            ps.setString(3, carte.getDateExpiration());
-            ps.setString(4, carte.getStatut().name());
-            ps.setString(5, carte.getTypeCarte());
-            ps.setInt(6, carte.getIdClient());
+            ps.setString(1, carte.getNumero());
+            ps.setString(2, carte.getDateExpiration());
+            ps.setString(3, carte.getStatut().name());
+            ps.setString(4, carte.getTypeCarte());
+            ps.setInt(5, carte.getIdClient());
             
             return ps.executeUpdate() > 0;
         }
@@ -74,7 +73,7 @@ public class CarteDAO implements Dao<Carte> {
             ps.setString(2, carte.getDateExpiration());
             ps.setString(3, carte.getStatut().name());
             ps.setString(4, carte.getTypeCarte());
-            ps.setString(5, carte.getId());
+            ps.setInt(5, Integer.parseInt(carte.getId()));
             
             return ps.executeUpdate() > 0;
         }
@@ -86,7 +85,7 @@ public class CarteDAO implements Dao<Carte> {
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, String.valueOf(id));
+            ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         }
     }
@@ -124,13 +123,13 @@ public class CarteDAO implements Dao<Carte> {
         return Optional.empty();
     }
 
-    public boolean updateStatut(String carteId, StatuCarte statut) throws SQLException {
+    public boolean updateStatut(int carteId, StatuCarte statut) throws SQLException {
         String sql = "UPDATE Carte SET statut = ? WHERE id = ?";
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setString(1, statut.name());
-            ps.setString(2, carteId);
+            ps.setInt(2, carteId);
             return ps.executeUpdate() > 0;
         }
     }
@@ -140,7 +139,7 @@ public class CarteDAO implements Dao<Carte> {
         
         return switch (typeCarte.toUpperCase()) {
             case "DEBIT" -> new CarteDebit(
-                rs.getString("id"),
+                String.valueOf(rs.getInt("id")),
                 rs.getString("numero"),
                 rs.getString("dateExpiration"),
                 StatuCarte.valueOf(rs.getString("statut")),
@@ -149,7 +148,7 @@ public class CarteDAO implements Dao<Carte> {
                 0.0f
             );
             case "CREDIT" -> new CarteCredit(
-                rs.getString("id"),
+                String.valueOf(rs.getInt("id")),
                 rs.getString("numero"),
                 rs.getString("dateExpiration"),
                 StatuCarte.valueOf(rs.getString("statut")),
@@ -158,7 +157,7 @@ public class CarteDAO implements Dao<Carte> {
                 0.0f
             );
             case "PREPAYEE" -> new CartePrepayee(
-                rs.getString("id"),
+                String.valueOf(rs.getInt("id")),
                 rs.getString("numero"),
                 rs.getString("dateExpiration"),
                 StatuCarte.valueOf(rs.getString("statut")),

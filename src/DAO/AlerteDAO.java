@@ -28,7 +28,7 @@ public class AlerteDAO implements Dao<AlerteFraude> {
                         rs.getInt("id"),
                         rs.getString("description"),
                         NiveauAlerte.valueOf(rs.getString("niveau")),
-                        rs.getString("idCarte")
+                        rs.getInt("idCarte")
                     ));
                 }
             }
@@ -50,7 +50,7 @@ public class AlerteDAO implements Dao<AlerteFraude> {
                     rs.getInt("id"),
                     rs.getString("description"),
                     NiveauAlerte.valueOf(rs.getString("niveau")),
-                    rs.getString("idCarte")
+                    rs.getInt("idCarte")
                 ));
             }
         }
@@ -65,7 +65,7 @@ public class AlerteDAO implements Dao<AlerteFraude> {
             
             ps.setString(1, alerte.description());
             ps.setString(2, alerte.niveau().name());
-            ps.setString(3, alerte.idCarte());
+            ps.setInt(3, alerte.idCarte());
             
             return ps.executeUpdate() > 0;
         }
@@ -96,21 +96,21 @@ public class AlerteDAO implements Dao<AlerteFraude> {
         }
     }
 
-    public List<AlerteFraude> findByCarteId(String carteId) throws SQLException {
+    public List<AlerteFraude> findByCarteId(int carteId) throws SQLException {
         List<AlerteFraude> alertes = new ArrayList<>();
         String sql = "SELECT id, description, niveau, idCarte FROM AlerteFraude WHERE idCarte = ?";
         
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, carteId);
+            ps.setInt(1, carteId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     alertes.add(new AlerteFraude(
                         rs.getInt("id"),
                         rs.getString("description"),
                         NiveauAlerte.valueOf(rs.getString("niveau")),
-                        rs.getString("idCarte")
+                        rs.getInt("idCarte")
                     ));
                 }
             }
@@ -132,7 +132,7 @@ public class AlerteDAO implements Dao<AlerteFraude> {
                         rs.getInt("id"),
                         rs.getString("description"),
                         NiveauAlerte.valueOf(rs.getString("niveau")),
-                        rs.getString("idCarte")
+                        rs.getInt("idCarte")
                     ));
                 }
             }

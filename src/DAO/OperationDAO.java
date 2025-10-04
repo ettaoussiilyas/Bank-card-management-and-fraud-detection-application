@@ -32,7 +32,7 @@ public class OperationDAO implements Dao<OperationCarte> {
                         rs.getTimestamp("date"),
                         TypeOperation.valueOf(rs.getString("type")),
                         rs.getString("lieu"),
-                        rs.getString("idCarte")
+                        rs.getInt("idCarte")
                     ));
                 }
             }
@@ -56,7 +56,7 @@ public class OperationDAO implements Dao<OperationCarte> {
                     rs.getTimestamp("date"),
                     TypeOperation.valueOf(rs.getString("type")),
                     rs.getString("lieu"),
-                    rs.getString("idCarte")
+                    rs.getInt("idCarte")
                 ));
             }
         }
@@ -73,7 +73,7 @@ public class OperationDAO implements Dao<OperationCarte> {
             ps.setDouble(2, operation.montant());
             ps.setString(3, operation.type().name());
             ps.setString(4, operation.lieu());
-            ps.setString(5, operation.idCarte());
+            ps.setInt(5, operation.idCarte());
             
             return ps.executeUpdate() > 0;
         }
@@ -106,14 +106,14 @@ public class OperationDAO implements Dao<OperationCarte> {
         }
     }
 
-    public List<OperationCarte> findByCarteId(String carteId) throws SQLException {
+    public List<OperationCarte> findByCarteId(int carteId) throws SQLException {
         List<OperationCarte> operations = new ArrayList<>();
         String sql = "SELECT id, date, montant, type, lieu, idCarte FROM OperationCarte WHERE idCarte = ?";
         
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, carteId);
+            ps.setInt(1, carteId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     operations.add(new OperationCarte(
@@ -122,7 +122,7 @@ public class OperationDAO implements Dao<OperationCarte> {
                         rs.getTimestamp("date"),
                         TypeOperation.valueOf(rs.getString("type")),
                         rs.getString("lieu"),
-                        rs.getString("idCarte")
+                        rs.getInt("idCarte")
                     ));
                 }
             }
@@ -146,7 +146,7 @@ public class OperationDAO implements Dao<OperationCarte> {
                         rs.getTimestamp("date"),
                         TypeOperation.valueOf(rs.getString("type")),
                         rs.getString("lieu"),
-                        rs.getString("idCarte")
+                        rs.getInt("idCarte")
                     ));
                 }
             }
@@ -171,7 +171,7 @@ public class OperationDAO implements Dao<OperationCarte> {
                         rs.getTimestamp("date"),
                         TypeOperation.valueOf(rs.getString("type")),
                         rs.getString("lieu"),
-                        rs.getString("idCarte")
+                        rs.getInt("idCarte")
                     ));
                 }
             }
@@ -179,14 +179,14 @@ public class OperationDAO implements Dao<OperationCarte> {
         return operations;
     }
 
-    public List<OperationCarte> findByCarteAndDateRange(String carteId, Date startDate, Date endDate) throws SQLException {
+    public List<OperationCarte> findByCarteAndDateRange(int carteId, Date startDate, Date endDate) throws SQLException {
         List<OperationCarte> operations = new ArrayList<>();
         String sql = "SELECT id, date, montant, type, lieu, idCarte FROM OperationCarte WHERE idCarte = ? AND date BETWEEN ? AND ?";
         
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, carteId);
+            ps.setInt(1, carteId);
             ps.setTimestamp(2, new Timestamp(startDate.getTime()));
             ps.setTimestamp(3, new Timestamp(endDate.getTime()));
             try (ResultSet rs = ps.executeQuery()) {
@@ -197,7 +197,7 @@ public class OperationDAO implements Dao<OperationCarte> {
                         rs.getTimestamp("date"),
                         TypeOperation.valueOf(rs.getString("type")),
                         rs.getString("lieu"),
-                        rs.getString("idCarte")
+                        rs.getInt("idCarte")
                     ));
                 }
             }
