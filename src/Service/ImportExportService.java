@@ -83,7 +83,7 @@ public class ImportExportService {
             double montant = Double.parseDouble(parts[1].trim());
             TypeOperation type = TypeOperation.valueOf(parts[2].trim().toUpperCase());
             String lieu = parts[3].trim();
-            String idCarte = parts[4].trim();
+            int idCarte = Integer.parseInt(parts[4].trim());
 
             // Validate card exists and is active
             if (!carteService.validateCarteForOperation(idCarte)) {
@@ -93,13 +93,13 @@ public class ImportExportService {
             // Record operation
             return operationService.recordOperation(montant, type, lieu, idCarte);
 
-        } catch (ParseException | NumberFormatException | IllegalArgumentException e) {
+        } catch (ParseException | IllegalArgumentException e) {
             return false;
         }
     }
 
     // Export operations to CSV file
-    public boolean exportOperationsToCSV(String filePath, String carteId) {
+    public boolean exportOperationsToCSV(String filePath, int carteId) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             // Write header
             writer.println("Date,Montant,Type,Lieu,CarteID");
@@ -109,7 +109,7 @@ public class ImportExportService {
 
             // Write data
             for (OperationCarte operation : operations) {
-                writer.printf("%s,%.2f,%s,%s,%s%n",
+                writer.printf("%s,%.2f,%s,%s,%d%n",
                     dateFormat.format(operation.date()),
                     operation.montant(),
                     operation.type(),
@@ -138,7 +138,7 @@ public class ImportExportService {
 
             // Write data
             for (OperationCarte operation : operations) {
-                writer.printf("%d,%s,%.2f,%s,%s,%s%n",
+                writer.printf("%d,%s,%.2f,%s,%s,%d%n",
                     operation.id(),
                     dateFormat.format(operation.date()),
                     operation.montant(),
@@ -203,17 +203,16 @@ public class ImportExportService {
     private boolean processCardLine(String line) {
         try {
             String[] parts = line.split(",");
-            if (parts.length != 3) {
+            if (parts.length != 2) {
                 return false;
             }
 
-            // Parse CSV: carteId,typeCarte,clientId
-            String carteId = parts[0].trim();
-            String typeCarte = parts[1].trim();
-            int clientId = Integer.parseInt(parts[2].trim());
+            // Parse CSV: typeCarte,clientId (ID auto-generated)
+            String typeCarte = parts[0].trim();
+            int clientId = Integer.parseInt(parts[1].trim());
 
             // Create card
-            return carteService.createCarte(carteId, typeCarte, clientId);
+            return carteService.createCarte(typeCarte, clientId);
 
         } catch (NumberFormatException e) {
             return false;

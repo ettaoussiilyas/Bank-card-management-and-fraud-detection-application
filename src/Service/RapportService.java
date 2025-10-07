@@ -23,16 +23,16 @@ public class RapportService {
     }
 
     // Generate top 5 most used cards report
-    public List<String> getTop5MostUsedCards() {
+    public List<Integer> getTop5MostUsedCards() {
         List<Carte> allCards = carteService.getAllCartes();
         
         return allCards.stream()
             .collect(Collectors.toMap(
-                Carte::getId,
-                carte -> operationService.getOperationsByCarteId(carte.getId()).size()
+                carte -> Integer.parseInt(carte.getId()),
+                carte -> operationService.getOperationsByCarteId(Integer.parseInt(carte.getId())).size()
             ))
             .entrySet().stream()
-            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
             .limit(5)
             .map(Map.Entry::getKey)
             .collect(Collectors.toList());
@@ -111,7 +111,7 @@ public class RapportService {
             report.append("- ").append(status).append(": ").append(count).append(" cartes\n"));
         
         // Top cards
-        List<String> topCards = getTop5MostUsedCards();
+        List<Integer> topCards = getTop5MostUsedCards();
         report.append("\nTOP 5 CARTES LES PLUS UTILISÉES:\n");
         for(int i = 0; i < topCards.size(); i++) {
             report.append((i+1)).append(". Carte ").append(topCards.get(i)).append("\n");
