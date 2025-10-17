@@ -22,7 +22,6 @@ public class RapportService {
         fraudeService = new FraudeService();
     }
 
-    // Generate top 5 most used cards report
     public List<Integer> getTop5MostUsedCards() {
         List<Carte> allCards = carteService.getAllCartes();
         
@@ -38,7 +37,6 @@ public class RapportService {
             .collect(Collectors.toList());
     }
 
-    // Generate blocked/suspicious cards report
     public List<Carte> getBlockedAndSuspiciousCards() {
         return carteService.getAllCartes().stream()
             .filter(carte -> carte.getStatut() == StatuCarte.BLOQUEE || 
@@ -46,7 +44,6 @@ public class RapportService {
             .collect(Collectors.toList());
     }
 
-    // Generate transaction statistics
     public Map<TypeOperation, Long> getTransactionStatistics() {
         List<OperationCarte> allOperations = operationService.getAllOperations();
         
@@ -57,7 +54,6 @@ public class RapportService {
             ));
     }
 
-    // Generate daily transaction volume
     public double getDailyTransactionVolume() {
         List<OperationCarte> todayOperations = operationService.getOperationsByDateRange(
             new java.util.Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000),
@@ -69,7 +65,6 @@ public class RapportService {
             .sum();
     }
 
-    // Generate cards by status report
     public Map<StatuCarte, Long> getCardsByStatus() {
         List<Carte> allCards = carteService.getAllCartes();
         
@@ -80,7 +75,6 @@ public class RapportService {
             ));
     }
 
-    // Generate high-risk cards report
     public List<Integer> getHighRiskCards() {
         List<Carte> allCards = carteService.getAllCartes();
         
@@ -93,7 +87,6 @@ public class RapportService {
             .collect(Collectors.toList());
     }
 
-    // Generate monthly transaction report
     public String generateMonthlyReport() {
         StringBuilder report = new StringBuilder();
         report.append("=== RAPPORT MENSUEL BANCAIRE ===\n\n");
@@ -104,13 +97,11 @@ public class RapportService {
         stats.forEach((type, count) -> 
             report.append("- ").append(type).append(": ").append(count).append(" transactions\n"));
         
-        // Card status
         Map<StatuCarte, Long> cardStats = getCardsByStatus();
         report.append("\nSTATUT DES CARTES:\n");
         cardStats.forEach((status, count) -> 
             report.append("- ").append(status).append(": ").append(count).append(" cartes\n"));
         
-        // Top cards
         List<Integer> topCards = getTop5MostUsedCards();
         report.append("\nTOP 5 CARTES LES PLUS UTILISÉES:\n");
         for(int i = 0; i < topCards.size(); i++) {
@@ -128,7 +119,6 @@ public class RapportService {
         return report.toString();
     }
 
-    // Generate security report
     public String generateSecurityReport() {
         StringBuilder report = new StringBuilder();
         report.append("=== RAPPORT SÉCURITÉ ===\n\n");
@@ -149,7 +139,6 @@ public class RapportService {
         return report.toString();
     }
 
-    // Generate performance metrics
     public Map<String, Object> getPerformanceMetrics() {
         return Map.of(
             "totalCards", carteService.getAllCartes().size(),
@@ -160,5 +149,20 @@ public class RapportService {
                 .count(),
             "riskCards", getHighRiskCards().size()
         );
+    }
+
+    public List<Integer> getBlockedCards() {
+        return carteService.getAllCartes().stream()
+            .filter(carte -> carte.getStatut() == StatuCarte.BLOQUEE)
+            .map(carte -> Integer.parseInt(carte.getId()))
+            .collect(Collectors.toList());
+    }
+
+    public int getTotalCardsCount() {
+        return carteService.getAllCartes().size();
+    }
+
+    public int getTotalOperationsCount() {
+        return operationService.getAllOperations().size();
     }
 }

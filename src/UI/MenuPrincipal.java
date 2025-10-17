@@ -39,7 +39,7 @@ public class MenuPrincipal {
             
             switch (choix) {
                 case 1 -> creerClient();
-                case 2 -> emettrearte();
+                case 2 -> emettreCartte();
                 case 3 -> effectuerOperation();
                 case 4 -> consulterHistorique();
                 case 5 -> analyserFraudes();
@@ -70,7 +70,7 @@ public class MenuPrincipal {
         }
     }
     
-    private void emettrearte() {
+    private void emettreCartte() {
         System.out.print("ID du client: ");
         int clientId = scanner.nextInt();
         scanner.nextLine();

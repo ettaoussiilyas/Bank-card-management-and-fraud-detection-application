@@ -18,20 +18,23 @@ public class ClientService {
         clientDao = new ClientDAO();
     }
 
+    public boolean createClient(String nom, String email, String telephone) {
+        Client client = new Client(0, nom, email, telephone);
+        return createClient(client);
+    }
+
     public boolean createClient(Client client){
-        // Input validation
         if(!validateClientData(client)) {
             return false;
         }
         
         try {
-            // Check uniqueness constraints
             if(clientDao.findByEmail(client.email()).isPresent()) {
-                return false; // Email already exists
+                return false;
             }
 
             if(clientDao.findByTelephone(client.telephone()).isPresent()) {
-                return false; // Phone already exists
+                return false;
             }
             
             return clientDao.save(client);
@@ -48,12 +51,10 @@ public class ClientService {
         }
         
         try {
-            // Check if client exists
             if(clientDao.getById(client.id()).isEmpty()) {
                 return false;
             }
             
-            // Check uniqueness for other clients
             Optional<Client> existingEmail = clientDao.findByEmail(client.email());
             if(existingEmail.isPresent() && existingEmail.get().id() != client.id()) {
                 return false;

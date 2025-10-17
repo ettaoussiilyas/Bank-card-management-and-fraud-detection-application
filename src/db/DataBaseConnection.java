@@ -1,4 +1,4 @@
-package Util;
+package db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,10 +10,6 @@ public class DataBaseConnection {
     private static final String password = "";
 
     public static Connection getConnection() throws SQLException{
-        Connection connection = null;
-        connection = DriverManager.getConnection(url, user, password);
-        System.out.println("success");
-        return connection;
-
+        return DriverManager.getConnection(url, user, password);
     }
 }

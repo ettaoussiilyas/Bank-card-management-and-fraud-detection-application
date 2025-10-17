@@ -3,6 +3,7 @@ package Service;
 import DAO.AlerteDAO;
 import Entity.Record.AlerteFraude;
 import Entity.Record.OperationCarte;
+import Entity.SealedClass.Carte;
 import Entity.Enum.NiveauAlerte;
 import Entity.Enum.TypeOperation;
 
@@ -19,7 +20,6 @@ public class FraudeService {
     private final OperationService operationService;
     private final CarteService carteService;
 
-    // Fraud detection thresholds
     private static final double HIGH_AMOUNT_THRESHOLD = 5000.0;
     private static final int MAX_OPERATIONS_PER_HOUR = 10;
     private static final long LOCATION_TIME_THRESHOLD = 30; // minutes
@@ -30,18 +30,15 @@ public class FraudeService {
         carteService = new CarteService();
     }
 
-    // Main fraud detection method
     public void analyzeCardOperations(int carteId) {
         List<OperationCarte> recentOperations = operationService.getRecentOperationsForCarte(carteId, 24);
         
-        // Check various fraud patterns
         checkHighAmountTransactions(carteId, recentOperations);
         checkFrequentTransactions(carteId, recentOperations);
         checkSuspiciousLocations(carteId, recentOperations);
         checkUnusualPatterns(carteId, recentOperations);
     }
 
-    // Detect high amount transactions
     private void checkHighAmountTransactions(int carteId, List<OperationCarte> operations) {
         for(OperationCarte operation : operations) {
             if(operation.montant() > HIGH_AMOUNT_THRESHOLD) {
@@ -49,7 +46,6 @@ public class FraudeService {
                     "Montant élevé détecté: " + operation.montant() + "€", 
                     NiveauAlerte.AVERTISSEMENT);
                 
-                // Auto-suspend card for very high amounts
                 if(operation.montant() > HIGH_AMOUNT_THRESHOLD * 2) {
                     carteService.suspendCarte(carteId);
                     createAlert(carteId, 
@@ -60,7 +56,6 @@ public class FraudeService {
         }
     }
 
-    // Detect too many transactions in short time
     private void checkFrequentTransactions(int carteId, List<OperationCarte> operations) {
         List<OperationCarte> lastHourOps = operationService.getRecentOperationsForCarte(carteId, 1);
         
@@ -69,7 +64,6 @@ public class FraudeService {
                 "Trop de transactions détectées: " + lastHourOps.size() + " en 1 heure", 
                 NiveauAlerte.AVERTISSEMENT);
             
-            // Block card if excessive transactions
             if(lastHourOps.size() > MAX_OPERATIONS_PER_HOUR * 2) {
                 carteService.blockCarte(carteId);
                 createAlert(carteId, 
@@ -79,7 +73,6 @@ public class FraudeService {
         }
     }
 
-    // Detect transactions in different locations within short time
     private void checkSuspiciousLocations(int carteId, List<OperationCarte> operations) {
         if(operations.size() < 2) return;
         
@@ -87,7 +80,6 @@ public class FraudeService {
             OperationCarte op1 = operations.get(i);
             OperationCarte op2 = operations.get(i + 1);
             
-            // Check if different locations within short time
             if(!op1.lieu().equals(op2.lieu())) {
                 long timeDiff = Math.abs(op1.date().getTime() - op2.date().getTime());
                 long minutesDiff = TimeUnit.MILLISECONDS.toMinutes(timeDiff);
@@ -98,29 +90,24 @@ public class FraudeService {
                         " en " + minutesDiff + " minutes", 
                         NiveauAlerte.CRITIQUE);
                     
-                    // Auto-block for suspicious location pattern
                     carteService.blockCarte(carteId);
                 }
             }
         }
     }
 
-    // Detect unusual transaction patterns
     private void checkUnusualPatterns(int carteId, List<OperationCarte> operations) {
-        // Check for unusual transaction types
         Set<TypeOperation> typesUsed = new HashSet<>();
         for(OperationCarte op : operations) {
             typesUsed.add(op.type());
         }
         
-        // Alert if all transaction types used in short time (unusual)
         if(typesUsed.size() >= 3) {
             createAlert(carteId, 
                 "Pattern inhabituel: tous types de transactions utilisés", 
                 NiveauAlerte.INFO);
         }
         
-        // Check for round amounts (potential fraud indicator)
         long roundAmounts = operations.stream()
             .mapToDouble(OperationCarte::montant)
             .filter(amount -> amount % 100 == 0)
@@ -133,7 +120,6 @@ public class FraudeService {
         }
     }
 
-    // Create fraud alert
     private void createAlert(int carteId, String description, NiveauAlerte niveau) {
         try {
             AlerteFraude alert = new AlerteFraude(0, description, niveau, carteId);
@@ -146,7 +132,6 @@ public class FraudeService {
         }
     }
 
-    // Get all alerts for a card
     public List<AlerteFraude> getAlertsForCarte(int carteId) {
         try {
             return alerteDao.findByCarteId(carteId);
@@ -156,7 +141,6 @@ public class FraudeService {
         }
     }
 
-    // Get critical alerts
     public List<AlerteFraude> getCriticalAlerts() {
         try {
             return alerteDao.findCriticalAlerts();
@@ -166,10 +150,20 @@ public class FraudeService {
         }
     }
 
-    // Manual fraud analysis trigger
     public void performManualFraudCheck(int carteId) {
         System.out.println("Démarrage analyse manuelle fraude pour carte: " + carteId);
         analyzeCardOperations(carteId);
         System.out.println("Analyse fraude terminée pour carte: " + carteId);
+    }
+
+    public void analyzeCardForFraud(int carteId) {
+        analyzeCardOperations(carteId);
+    }
+
+    public void analyzeAllCards() {
+        List<Carte> allCards = carteService.getAllCartes();
+        for(Carte carte : allCards) {
+            analyzeCardOperations(Integer.parseInt(carte.getId()));
+        }
     }
 }

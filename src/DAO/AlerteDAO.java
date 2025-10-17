@@ -3,7 +3,7 @@ package DAO;
 import DAO.Inteface.Dao;
 import Entity.Record.AlerteFraude;
 import Entity.Enum.NiveauAlerte;
-import Util.DataBaseConnection;
+import db.DataBaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

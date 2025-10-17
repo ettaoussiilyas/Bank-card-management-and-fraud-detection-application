@@ -2,7 +2,7 @@ package DAO;
 
 import DAO.Inteface.Dao;
 import Entity.Record.Client;
-import Util.DataBaseConnection;
+import db.DataBaseConnection;
 import java.sql.*;
 
 import java.util.ArrayList;

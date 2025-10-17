@@ -1,5 +1,5 @@
 import UI.MenuPrincipal;
-import Util.DataBaseConnection;
+import db.DataBaseConnection;
 
 import java.sql.Connection;
 import java.sql.SQLException;

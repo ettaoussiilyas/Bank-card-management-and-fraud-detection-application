@@ -14,14 +14,14 @@ public class FraudeValidator {
     private static final int MAX_OPERATIONS_PER_HOUR = 10;
     
     public static boolean isHighAmountSuspicious(double montant, Carte carte) {
-        return switch (carte) {
-            case CarteDebit debit -> 
-                montant > HIGH_AMOUNT_THRESHOLD * 0.5; // Lower threshold for debit
-            case CarteCredit credit -> 
-                montant > HIGH_AMOUNT_THRESHOLD * 2.0; // Higher threshold for credit
-            case CartePrepayee prepayee -> 
-                montant > carte.getSolde(); // Can't exceed available balance
-        };
+        if (carte instanceof CarteDebit) {
+            return montant > HIGH_AMOUNT_THRESHOLD * 0.5;
+        } else if (carte instanceof CarteCredit) {
+            return montant > HIGH_AMOUNT_THRESHOLD * 2.0;
+        } else if (carte instanceof CartePrepayee) {
+            return montant > carte.getSolde();
+        }
+        return false;
     }
     
     public static boolean hasRapidSuccessiveOperations(List<OperationCarte> recentOperations) {
@@ -60,13 +60,13 @@ public class FraudeValidator {
     }
     
     public static boolean exceedsCardLimits(double montant, Carte carte) {
-        return switch (carte) {
-            case CarteDebit debit -> 
-                montant > 1000.0; // Daily limit for debit cards
-            case CarteCredit credit -> 
-                montant > 5000.0; // Monthly limit for credit cards
-            case CartePrepayee prepayee -> 
-                montant > carte.getSolde(); // Available balance limit
-        };
+        if (carte instanceof CarteDebit) {
+            return montant > 1000.0;
+        } else if (carte instanceof CarteCredit) {
+            return montant > 5000.0;
+        } else if (carte instanceof CartePrepayee) {
+            return montant > carte.getSolde();
+        }
+        return false;
     }
 }
