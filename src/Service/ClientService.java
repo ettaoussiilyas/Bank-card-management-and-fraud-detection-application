@@ -12,7 +12,7 @@ public class ClientService {
 
     private final ClientDAO clientDao;
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10,15}$");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{8,15}$");
 
     public ClientService(){
         clientDao = new ClientDAO();
@@ -29,6 +29,11 @@ public class ClientService {
 
     public boolean createClient(Client client){
         if(!validateClientData(client)) {
+            System.err.println("Données client invalides:");
+            if(client.nom() == null || client.nom().trim().isEmpty()) System.err.println("- Nom requis");
+            if(client.email() == null || !EMAIL_PATTERN.matcher(client.email()).matches()) System.err.println("- Email invalide");
+            if(client.telephone() == null || !PHONE_PATTERN.matcher(client.telephone()).matches()) System.err.println("- Téléphone invalide (8-15 chiffres requis)");
+            if(client.password() == null || client.password().trim().isEmpty()) System.err.println("- Mot de passe requis");
             return false;
         }
         
