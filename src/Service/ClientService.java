@@ -12,15 +12,19 @@ public class ClientService {
 
     private final ClientDAO clientDao;
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10,15}$");
 
     public ClientService(){
         clientDao = new ClientDAO();
     }
 
-    public boolean createClient(String nom, String email, String telephone) {
-        Client client = new Client(0, nom, email, telephone, "client123");
+    public boolean createClient(String nom, String email, String telephone, String password) {
+        Client client = new Client(0, nom, email, telephone, password);
         return createClient(client);
+    }
+    
+    public boolean createClient(String nom, String email, String telephone) {
+        return createClient(nom, email, telephone, "client123");
     }
 
     public boolean createClient(Client client){
@@ -30,10 +34,12 @@ public class ClientService {
         
         try {
             if(clientDao.findByEmail(client.email()).isPresent()) {
+                System.err.println("Email déjà utilisé: " + client.email());
                 return false;
             }
 
             if(clientDao.findByTelephone(client.telephone()).isPresent()) {
+                System.err.println("Téléphone déjà utilisé: " + client.telephone());
                 return false;
             }
             
@@ -41,6 +47,7 @@ public class ClientService {
             
         } catch (SQLException e) {
             System.err.println("Database error while creating client: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -123,6 +130,7 @@ public class ClientService {
         if(client.nom() == null || client.nom().trim().isEmpty()) return false;
         if(client.email() == null || !EMAIL_PATTERN.matcher(client.email()).matches()) return false;
         if(client.telephone() == null || !PHONE_PATTERN.matcher(client.telephone()).matches()) return false;
+        if(client.password() == null || client.password().trim().isEmpty()) return false;
         return true;
     }
 }

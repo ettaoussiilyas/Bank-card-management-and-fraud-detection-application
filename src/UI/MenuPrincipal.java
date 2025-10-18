@@ -62,8 +62,10 @@ public class MenuPrincipal {
         String email = scanner.nextLine();
         System.out.print("Téléphone: ");
         String telephone = scanner.nextLine();
+        System.out.print("Mot de passe: ");
+        String password = scanner.nextLine();
         
-        if (clientService.createClient(nom, email, telephone)) {
+        if (clientService.createClient(nom, email, telephone, password)) {
             System.out.println("Client créé avec succès!");
         } else {
             System.out.println("Erreur lors de la création du client.");
