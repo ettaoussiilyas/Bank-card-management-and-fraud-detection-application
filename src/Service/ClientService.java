@@ -19,7 +19,7 @@ public class ClientService {
     }
 
     public boolean createClient(String nom, String email, String telephone) {
-        Client client = new Client(0, nom, email, telephone);
+        Client client = new Client(0, nom, email, telephone, "client123");
         return createClient(client);
     }
 

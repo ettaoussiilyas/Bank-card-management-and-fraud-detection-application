@@ -1,4 +1,4 @@
-import UI.MenuPrincipal;
+import UI.LoginSystem;
 import db.DataBaseConnection;
 
 import java.sql.Connection;
@@ -12,8 +12,8 @@ public class Main {
                 System.out.println("Connexion à la base de données réussie!");
                 conn.close();
                 
-                MenuPrincipal menu = new MenuPrincipal();
-                menu.afficherMenu();
+                LoginSystem login = new LoginSystem();
+                login.start();
                 
             } else {
                 System.err.println("Impossible de se connecter à la base de données!");

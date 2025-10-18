@@ -5,12 +5,23 @@
 CREATE DATABASE IF NOT EXISTS bank_card_system;
 USE bank_card_system;
 
+-- Create Employee table
+CREATE TABLE IF NOT EXISTS Employee (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    nom VARCHAR(100) NOT NULL,
+    role ENUM('ADMIN', 'MANAGER', 'AGENT') NOT NULL
+);
+
 -- Create Client table
 CREATE TABLE IF NOT EXISTS Client (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nom VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    telephone VARCHAR(20) UNIQUE NOT NULL
+    telephone VARCHAR(20) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL
 );
 
 -- Create Carte table
@@ -51,10 +62,15 @@ CREATE TABLE IF NOT EXISTS AlerteFraude (
 );
 
 -- Insert sample data
-INSERT INTO Client (nom, email, telephone) VALUES
-('Ahmed Benali', 'ahmed.benali@email.com', '0612345678'),
-('Fatima Zahra', 'fatima.zahra@email.com', '0623456789'),
-('Mohamed Alami', 'mohamed.alami@email.com', '0634567890');
+INSERT INTO Employee (username, email, password, nom, role) VALUES
+('admin', 'admin@bank.com', 'admin123', 'Administrateur Système', 'ADMIN'),
+('manager', 'manager@bank.com', 'manager123', 'Chef d\'Agence', 'MANAGER'),
+('agent', 'agent@bank.com', 'agent123', 'Agent Bancaire', 'AGENT');
+
+INSERT INTO Client (nom, email, telephone, password) VALUES
+('Ahmed Benali', 'ahmed.benali@email.com', '0612345678', 'client123'),
+('Fatima Zahra', 'fatima.zahra@email.com', '0623456789', 'client123'),
+('Mohamed Alami', 'mohamed.alami@email.com', '0634567890', 'client123');
 
 INSERT INTO Carte (numero, dateExpiration, statut, typeCarte, idClient) VALUES
 ('1234567890123456', '2025-12-31', 'ACTIVE', 'DEBIT', 1),

@@ -13,7 +13,7 @@ public class ClientDAO implements Dao<Client> {
 
     @Override
     public Optional<Client> getById(int id) throws SQLException {
-        String sql = "SELECT id, nom, email, telephone FROM client where id = ?";
+        String sql = "SELECT id, nom, email, telephone, password FROM client where id = ?";
         try (Connection con = DataBaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             
@@ -24,7 +24,8 @@ public class ClientDAO implements Dao<Client> {
                         resultSet.getInt("id"),
                         resultSet.getString("nom"),
                         resultSet.getString("email"),
-                        resultSet.getString("telephone")
+                        resultSet.getString("telephone"),
+                        resultSet.getString("password")
                     ));
                 }
             }
@@ -35,7 +36,7 @@ public class ClientDAO implements Dao<Client> {
     @Override
     public List<Client> getAll() throws SQLException {
         List<Client> clients = new ArrayList<>();
-        String sql = "SELECT id, nom, email, telephone FROM client";
+        String sql = "SELECT id, nom, email, telephone, password FROM client";
 
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -46,7 +47,8 @@ public class ClientDAO implements Dao<Client> {
                         resultSet.getInt("id"),
                         resultSet.getString("nom"),
                         resultSet.getString("email"),
-                        resultSet.getString("telephone")
+                        resultSet.getString("telephone"),
+                        resultSet.getString("password")
                 ));
             }
         }
@@ -57,7 +59,7 @@ public class ClientDAO implements Dao<Client> {
 
     @Override
     public boolean save(Client client) throws SQLException {
-        String sql = "INSERT INTO client (nom, email, telephone) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO client (nom, email, telephone, password) VALUES (?, ?, ?, ?)";
         try(
                 Connection conn = DataBaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
@@ -66,6 +68,7 @@ public class ClientDAO implements Dao<Client> {
             ps.setString(1, client.nom());
             ps.setString(2, client.email());
             ps.setString(3, client.telephone());
+            ps.setString(4, client.password());
             int row = ps.executeUpdate();
             if(row > 0) return true;
 
@@ -75,7 +78,7 @@ public class ClientDAO implements Dao<Client> {
 
     @Override
     public boolean update(Client client) throws SQLException {
-        String sql = "UPDATE client SET nom = ?, email = ?, telephone = ? WHERE id = ?";
+        String sql = "UPDATE client SET nom = ?, email = ?, telephone = ?, password = ? WHERE id = ?";
         try (
                 Connection conn = DataBaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
@@ -83,7 +86,8 @@ public class ClientDAO implements Dao<Client> {
             ps.setString(1, client.nom());
             ps.setString(2, client.email());
             ps.setString(3, client.telephone());
-            ps.setInt(4, client.id());
+            ps.setString(4, client.password());
+            ps.setInt(5, client.id());
             int row = ps.executeUpdate();
             if(row > 0) return true;
         }
@@ -103,7 +107,7 @@ public class ClientDAO implements Dao<Client> {
     }
 
     public Optional<Client> findByEmail(String email) throws SQLException {
-        String sql = "SELECT id, nom, email, telephone FROM client WHERE email = ?";
+        String sql = "SELECT id, nom, email, telephone, password FROM client WHERE email = ?";
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
@@ -114,7 +118,8 @@ public class ClientDAO implements Dao<Client> {
                         rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("email"),
-                        rs.getString("telephone")
+                        rs.getString("telephone"),
+                        rs.getString("password")
                     ));
                 }
             }
@@ -123,7 +128,7 @@ public class ClientDAO implements Dao<Client> {
     }
 
     public Optional<Client> findByTelephone(String telephone) throws SQLException {
-        String sql = "SELECT id, nom, email, telephone FROM client WHERE telephone = ?";
+        String sql = "SELECT id, nom, email, telephone, password FROM client WHERE telephone = ?";
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
@@ -134,7 +139,8 @@ public class ClientDAO implements Dao<Client> {
                         rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("email"),
-                        rs.getString("telephone")
+                        rs.getString("telephone"),
+                        rs.getString("password")
                     ));
                 }
             }
